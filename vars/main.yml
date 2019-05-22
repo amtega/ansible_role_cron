@@ -1,2 +1,21 @@
 ---
 # Role variables
+
+# Cron config files and dirs
+
+cron_files_dirs:
+  - /etc/crontab
+  - /etc/anacrontab
+  - /etc/cron.d
+  - /etc/cron.hourly
+  - /etc/cron.daily
+  - /etc/cron.weekly
+  - /etc/cron.monthly
+  - /etc/cron.deny
+  - /etc/cron.allow
+
+# Cron config files and dirs security
+
+cron_owner: root
+cron_group: root
+cron_mode: "0700"

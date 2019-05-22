@@ -1,2 +1,87 @@
 ---
 # Tasks for testing role
+
+- name: Configure docker sandbox environment
+  hosts: localhost
+  roles:
+    - role: amtega.docker_presets
+      docker_presets_images_json_query: >-
+        [? starts_with(name, `centos-6`)
+           || starts_with(name, `centos-7`)
+           || starts_with(name, `fedora-27`)
+           || starts_with(name, `fedora-28`) ]
+  tags:
+    - sandbox
+
+- name: Run idempotence test
+  hosts: localhost
+  roles:
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: started
+  tags:
+    - sandbox
+
+- name: Test crontab role
+  hosts: docker_sandbox_containers
+  roles:
+      - role: amtega.cron
+        vars:
+          cron_deny:
+            - username: nobody
+              state: present
+  tasks:
+    - name: Read crontab config files and directories
+      stat:
+        path: "{{ item }}"
+      loop: "{{ cron_files_dirs }}"
+      register: check_files_result
+
+    - name: Assert that permissions are correct
+      assert:
+        that:
+          - check_files_result.results[index].stat.mode == cron_mode
+          - check_files_result.results[index].stat.gr_name == cron_group
+          - check_files_result.results[index].stat.pw_name == cron_owner
+      when: check_files_result.results[index].stat.mode is defined
+      loop: "{{ cron_files_dirs }}"
+      loop_control:
+        index_var: index
+
+    - name: Read /etc/cron.allow file
+      command: cat /etc/cron.allow
+      register: read_cron_allow_result
+      changed_when: no
+
+    - name: Read /etc/cron.deny file
+      command: cat /etc/cron.deny
+      register: read_cron_deny_result
+      changed_when: no
+
+    - name: Assert cron.allow and cron.deny files are correct
+      assert:
+        that:
+          - read_cron_allow_result.stdout is search("root")
+          - read_cron_deny_result.stdout is search("nobody")
+
+    - name: Read crontab file
+      command: cat /etc/crontab
+      register: read_cron_result
+      changed_when: no
+
+    - name: Assert random delay is correct
+      assert:
+        that:
+          - >-
+            read_cron_result.stdout
+            is search("RANDOM_DELAY=" + cron_random_delay | string)
+  tags:
+    - idempotence
+
+- name: Cleanup docker sandbox
+  hosts: localhost
+  roles:
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: absent
+  tags:
+    - cleanup
+    - sandbox
