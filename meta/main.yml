@@ -2,7 +2,7 @@
 # Role dependencies
 
 galaxy_info:
-  role_name: amtega.crontab
+  role_name: cron
   author: Carlos Chedas Fernández / Juan Antonio Valiño García
   description: Configure cron
   company: AMTEGA - Xunta de Galicia
