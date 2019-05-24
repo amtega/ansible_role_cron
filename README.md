@@ -1,4 +1,4 @@
-# Ansible amtega.crontab role
+# Ansible crontab role
 
 This is an [Ansible](http://www.ansible.com) role to configure cron.
 
