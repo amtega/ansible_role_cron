@@ -13,9 +13,3 @@ cron_files_dirs:
   - /etc/cron.monthly
   - /etc/cron.deny
   - /etc/cron.allow
-
-# Cron config files and dirs security
-
-cron_owner: root
-cron_group: root
-cron_mode: "0700"
