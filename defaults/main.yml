@@ -26,3 +26,9 @@ cron_deny: []
 # Random delay for cron
 
 cron_random_delay: 30
+
+# Cron config files and dirs security
+
+cron_owner: root
+cron_group: root
+cron_mode: "0770"
