@@ -8,7 +8,7 @@
         line: "{{ cron_user_item.username }}"
         state: "{{ cron_user_item.state | default('present') }}"
         create: yes
-        mode: 0644
+        mode: "{{ cron_mode }}"
       loop: "{{ cron_allow }}"
       loop_control:
         loop_var: cron_user_item
@@ -22,7 +22,7 @@
         line: "{{ cron_user_item.username }}"
         state: "{{ cron_user_item.state | default('present') }}"
         create: yes
-        mode: 0644
+        mode: "{{ cron_mode }}"
       loop: "{{ cron_deny }}"
       loop_control:
         loop_var: cron_user_item
