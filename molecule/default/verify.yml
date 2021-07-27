@@ -5,7 +5,9 @@
   gather_facts: no
   tasks:
     - name: Include role vars
-      include_vars: ../vars/main.yml
+      include_vars: >-
+        {{ lookup('env', '$MOLECULE_EPHEMERAL_DIRECTORY')
+           + "/roles/amtega.cron/vars/main.yml" }}
 
     - name: Read crontab config files and directories
       stat:
