@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2022-06-27
+### Added
+- Added `cron_mode_dir` variable
+
+### Changed
+- Migrated test engine to podman
+
+### Fixed
+- Coding standards
+
 ## [1.4.0] - 2022-02-11
 ### Changed
 - Supported distros. Related to ansible/main#263

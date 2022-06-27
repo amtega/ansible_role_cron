@@ -3,13 +3,15 @@
 
 # Cron config files and dirs
 
-cron_files_dirs:
+cron_files:
   - /etc/crontab
   - /etc/anacrontab
+  - /etc/cron.deny
+  - /etc/cron.allow
+
+cron_dirs:
   - /etc/cron.d
   - /etc/cron.hourly
   - /etc/cron.daily
   - /etc/cron.weekly
   - /etc/cron.monthly
-  - /etc/cron.deny
-  - /etc/cron.allow
