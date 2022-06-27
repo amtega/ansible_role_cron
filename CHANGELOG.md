@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.6.0] - 2022-06-27
+## [1.5.0] - 2022-06-27
 ### Added
 - Added `cron_mode_dir` variable
 
