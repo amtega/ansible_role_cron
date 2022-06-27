@@ -32,3 +32,4 @@ cron_random_delay: 30
 cron_owner: root
 cron_group: root
 cron_mode: "0770"
+cron_mode_dir: "0770"

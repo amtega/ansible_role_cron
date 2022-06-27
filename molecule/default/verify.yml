@@ -5,48 +5,48 @@
   gather_facts: no
   tasks:
     - name: Include role vars
-      include_vars: ../../vars/main.yml
+      ansible.builtin.include_vars: ../../vars/main.yml
 
     - name: Read crontab config files and directories
-      stat:
+      ansible.builtin.stat:
         path: "{{ item }}"
-      loop: "{{ cron_files_dirs }}"
+      loop: "{{ cron_files + cron_dirs }}"
       register: check_files_result
 
     - name: Assert that permissions are correct
-      assert:
+      ansible.builtin.assert:
         that:
           - check_files_result.results[index].stat.mode == cron_mode
           - check_files_result.results[index].stat.gr_name == cron_group
           - check_files_result.results[index].stat.pw_name == cron_owner
       when: check_files_result.results[index].stat.mode is defined
-      loop: "{{ cron_files_dirs }}"
+      loop: "{{ cron_files + cron_dirs }}"
       loop_control:
         index_var: index
 
     - name: Read /etc/cron.allow file
-      command: cat /etc/cron.allow
+      ansible.builtin.command: cat /etc/cron.allow
       register: read_cron_allow_result
       changed_when: no
 
     - name: Read /etc/cron.deny file
-      command: cat /etc/cron.deny
+      ansible.builtin.command: cat /etc/cron.deny
       register: read_cron_deny_result
       changed_when: no
 
     - name: Assert cron.allow and cron.deny files are correct
-      assert:
+      ansible.builtin.assert:
         that:
           - read_cron_allow_result.stdout is search("root")
           - read_cron_deny_result.stdout is search("nobody")
 
     - name: Read crontab file
-      command: cat /etc/crontab
+      ansible.builtin.command: cat /etc/crontab
       register: read_cron_result
       changed_when: no
 
     - name: Assert random delay is correct
-      assert:
+      ansible.builtin.assert:
         that:
           - >-
             read_cron_result.stdout
