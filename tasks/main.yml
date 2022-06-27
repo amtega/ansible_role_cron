@@ -1,9 +1,10 @@
 ---
 # Role tasks
 
-- block:
+- name: Setup cron
+  block:
     - name: Setup cron.allow file
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/cron.allow
         line: "{{ cron_user_item.username }}"
         state: "{{ cron_user_item.state | default('present') }}"
@@ -17,7 +18,7 @@
           {{ cron_user_item.state | default('present') }}
 
     - name: Setup cron.deny file
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/cron.deny
         line: "{{ cron_user_item.username }}"
         state: "{{ cron_user_item.state | default('present') }}"
@@ -31,27 +32,29 @@
           {{ cron_user_item.state | default('present') }}
 
     - name: Check crontab config files and directories
-      stat:
+      ansible.builtin.stat:
         path: "{{ cron_file_item }}"
-      loop: "{{ cron_files_dirs }}"
+      loop: "{{ cron_files + cron_dirs }}"
       loop_control:
         loop_var: cron_file_item
       register: cron_check_files_result
 
     - name: Setup crontab config files and directories
-      file:
-        path: "{{ cron_file_item }}"
+      ansible.builtin.file:
+        path: "{{ cron_item }}"
         owner: "{{ cron_owner }}"
         group: "{{ cron_group }}"
-        mode: "{{ cron_mode }}"
-      when: cron_check_files_result.results[cron_file_index].stat.exists
-      loop: "{{ cron_files_dirs }}"
+        mode: >-
+          {{ (cron_item in cron_files)
+             | ternary(cron_mode, cron_mode_dir) }}
+      when: cron_check_files_result.results[cron_index].stat.exists
+      loop: "{{ cron_files + cron_dirs }}"
       loop_control:
-        loop_var: cron_file_item
-        index_var: cron_file_index
+        loop_var: cron_item
+        index_var: cron_index
 
     - name: Setup cron random delay
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/crontab
         line: "RANDOM_DELAY={{ cron_random_delay }}"
         state: present
